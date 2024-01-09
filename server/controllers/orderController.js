@@ -20,6 +20,8 @@ module.exports.createOrder = async (req, res) => {
             orderItemIds.push(savedOrderItem._id);
         }
 
+        const rand = Math.random().toString(16).substr(2, 16);
+
         const createOrder = new Order({
             orderItems: orderItemIds,
             customerName: name,
@@ -28,6 +30,7 @@ module.exports.createOrder = async (req, res) => {
             paymentMode: paymentMode,
             userId: _id,
             deliveryDetails: deliveryDetails,
+            orderNumber: rand,
         });
 
         const savedOrder = await createOrder.save();

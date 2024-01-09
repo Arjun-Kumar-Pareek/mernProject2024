@@ -14,6 +14,9 @@ const orderSchema = new mongoose.Schema({
         city: { type: String },
         postalCode: { type: String },
     },
+    orderNumber: {
+        type: String,
+    },
     createdAt: { type: Date, default: Date.now }
 });
 

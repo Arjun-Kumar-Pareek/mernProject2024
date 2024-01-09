@@ -36,7 +36,6 @@ module.exports.registerUser = async (req, res) => {
       }
       res.status(400).send({ success: false, message: "Email already exist" });
     } else {
-
       const creatUser = new Users({
         name: userName,
         email: userEmail,

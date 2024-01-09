@@ -1339,3 +1339,8 @@ button.pagination-btn:hover {
 }
 
 /* Check out page */
+.order-product-img {
+  width: 30px;
+  height: 30px;
+  margin-right: 5px;
+}
