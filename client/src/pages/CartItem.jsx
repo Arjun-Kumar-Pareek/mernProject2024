@@ -3,6 +3,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { AuthContext } from '../store/auth';
 import Swal from 'sweetalert2';
 import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
+import { NavLink, Link } from "react-router-dom";
+
 
 const CartItem = () => {
 
@@ -16,7 +18,7 @@ const CartItem = () => {
             "quantity": 1,
             "productId": productId
         });
-
+        fetchCartItems();
         if (response.ok) {
             const completeRes = await response.json();
         } else {
@@ -32,6 +34,7 @@ const CartItem = () => {
                     "Authorization": token,
                 },
             });
+            fetchCartItems()
             if (response.ok) {
                 const completeRes = await response.json();
                 cartCount();
@@ -120,7 +123,7 @@ const CartItem = () => {
 
     useEffect(() => {
         fetchCartItems();
-    }, [cartItemDetail])
+    }, [])
     // console.log(cartItemDetail[1].grandTotal);
 
     return (
@@ -179,7 +182,8 @@ const CartItem = () => {
                                 <h3>&#8377;{grandTotal && grandTotal}</h3>
                             </div>
                         </div>
-                        <button>Checkout</button>
+                        <NavLink to="/checkout"><button className='checkout'>Checkout</button></NavLink>
+
                     </div>
                 </div>
             </div>

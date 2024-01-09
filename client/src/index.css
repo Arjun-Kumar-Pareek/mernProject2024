@@ -1322,7 +1322,7 @@ button.pagination-btn:hover {
   padding: 15px 0;
 }
 
-.cartitems-total button {
+.cartitems-total button.checkout {
   width: 262px;
   height: 58px;
   outline: none;
@@ -1334,4 +1334,8 @@ button.pagination-btn:hover {
   cursor: pointer;
 }
 
-/*  */
+.cartitems-total button.checkout a {
+  color: white;
+}
+
+/* Check out page */

@@ -24,6 +24,7 @@ import ProductList from "./pages/ProductList";
 import UpdateProduct from "./pages/UpdateProduct";
 import CartItem from "./pages/CartItem";
 import SearchProduct from "./pages/SearchProduct";
+import Checkout from "./pages/Checkout/Checkout";
 
 const App = () => {
 
@@ -59,6 +60,7 @@ const App = () => {
           {isLoggedIn && (<Route path="/cart-item" element={<CartItem />} />)}
           {isLoggedIn && (<Route path="/user-profile" element={<UserProfile />} />)}
           {isLoggedIn && (<Route path="/update-profile" element={<UpdateProfile />} />)}
+          {isLoggedIn && (<Route path="/checkout" element={<Checkout />} />)}
 
           {hasRole('admin') && (<Route path="/view-all-user" element={<UsersList />} />)}
           {hasRole('admin') && (<Route path="/view-all-contact" element={<ContactList />} />)}
