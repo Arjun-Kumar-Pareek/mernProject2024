@@ -82,7 +82,7 @@ export default function Review() {
                     <ListItem key={i} sx={{ py: 1, px: 0 }}>
                         <img className='order-product-img' src={product.productImage} alt="" />
                         <ListItemText primary={product.productName} secondary={"Quantity  --  " + product.quantity} />
-                        <Typography variant="body2">&#8377;{product.productPrice}</Typography>
+                        <Typography variant="body2">&#8377;{product.productPrice * product.quantity}</Typography>
                     </ListItem>
                 ))}
 

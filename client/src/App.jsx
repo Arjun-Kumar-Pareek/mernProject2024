@@ -25,6 +25,8 @@ import UpdateProduct from "./pages/UpdateProduct";
 import CartItem from "./pages/CartItem";
 import SearchProduct from "./pages/SearchProduct";
 import Checkout from "./pages/Checkout/Checkout";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentCancel from "./pages/PaymentCancel";
 
 const App = () => {
 
@@ -56,6 +58,8 @@ const App = () => {
           <Route path="/service" element={<Service />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/sucess" element={<PaymentSuccess />} />
+          <Route path="/cancel" element={<PaymentCancel />} />
           <Route path="/product-details/:id" element={<ProductDetails />} />
           {isLoggedIn && (<Route path="/cart-item" element={<CartItem />} />)}
           {isLoggedIn && (<Route path="/user-profile" element={<UserProfile />} />)}

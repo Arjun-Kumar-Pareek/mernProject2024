@@ -1,5 +1,8 @@
 const Order = require("../models/orderModel");
 const OrderItem = require("../models/orderItemModel");
+// require("dotenv").config();
+const stripe = require("stripe")('sk_test_51OGy4BSEWW2cslHik2PtEBrFhq4uJL33DD428TzkcPZtAYC7oY70dzr0jHc409HHa9DE1tmtMh9a8bfdrPZCMs6c00d8UNy4R5');
+
 
 module.exports.createOrder = async (req, res) => {
     const { name, email, _id } = req.user.data;
@@ -35,11 +38,33 @@ module.exports.createOrder = async (req, res) => {
 
         const savedOrder = await createOrder.save();
 
-        res.status(200).send({
-            success: true,
-            message: "Order added successfully",
-            data: savedOrder._id,
+        const lineItems = orderItems.map((product) => ({
+            price_data: {
+                currency: "inr",
+                product_data: {
+                    name: product.productName,
+                    images: [product.imgdata]
+
+                },
+                unit_amount: product.price * 100,
+            },
+            quantity: product.quantity
+        }));
+
+        // console.log(lineItems);
+        // return false;
+
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            line_items: lineItems,
+            mode: "payment",
+            success_url: "http://localhost:5173/sucess",
+            cancel_url: "http://localhost:5173/cancel",
         });
+
+
+        res.json({ id: session.id })
+
     } catch (error) {
         console.error("Error in createOrder function:", error);
         res.status(400).send({

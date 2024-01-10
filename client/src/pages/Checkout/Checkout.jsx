@@ -19,6 +19,13 @@ import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../store/auth";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { loadStripe } from '@stripe/stripe-js';
+import {
+    PaymentElement,
+    Elements,
+    useStripe,
+    useElements,
+} from '@stripe/react-stripe-js';
 
 function Copyright() {
     return (
@@ -49,10 +56,9 @@ function getStepContent(step) {
 }
 
 export default function Checkout() {
+
     const [activeStep, setActiveStep] = React.useState(0);
-    const { token } = useContext(AuthContext);
-
-
+    const { token, API_BASE_URL } = useContext(AuthContext);
 
     const handleNext = async () => {
         setActiveStep(activeStep + 1);
@@ -102,6 +108,57 @@ export default function Checkout() {
     };
 
 
+    // payment integration
+    const makePayment = async () => {
+        const stripe = await loadStripe("pk_test_51OGy4BSEWW2cslHi0f17aZrw80XjrGri3c1xrmRkBuObWYSk5DmKU86w3pH5aN0BOXDUxx180N70ZiDQ3b7B0jmq00fuJJQGlF");
+
+        const body = {
+            "totalAmount": 27410,
+            "orderItems": [
+                {
+                    "productId": "650a802c629b22b4b347b528",
+                    "productName": "Testing",
+                    "quantity": 1,
+                    "price": 1299
+                },
+                {
+                    "productId": "650a7fcc629b22b4b347b522",
+                    "productName": "Testing2",
+                    "quantity": 2,
+                    "price": 6556
+                }
+            ],
+            "paymentMode": "Cash On Delivery",
+            "deliveryDetails": {
+                "address": "A3 Mall Road",
+                "state": "Rajshthan",
+                "city": "Jaipur",
+                "postalCode": "302039"
+            }
+        }
+
+        const headers = {
+            "Content-Type": "application/json",
+            "Authorization": token,
+        }
+        const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
+            method: "POST",
+            headers: headers,
+            body: JSON.stringify(body)
+        });
+
+        const session = await response.json();
+        console.log(session);
+        const result = stripe.redirectToCheckout({
+            sessionId: session.id
+        });
+
+        if (result.error) {
+            console.log(result.error);
+        }
+    }
+
+
     return (
         <React.Fragment>
             <CssBaseline />
@@ -114,11 +171,7 @@ export default function Checkout() {
                     borderBottom: (t) => `1px solid ${t.palette.divider}`,
                 }}
             >
-                <Toolbar>
-                    <Typography variant="h5" color="inherit" noWrap>
-                        Bharat Tech
-                    </Typography>
-                </Toolbar>
+
             </AppBar>
             <Container component="main" maxWidth="md" sx={{ mb: 4 }}>
                 <Paper variant="outlined" sx={{ my: { xs: 3, md: 6 }, p: { xs: 2, md: 3 } }}>
@@ -155,7 +208,7 @@ export default function Checkout() {
 
                                 <Button
                                     variant="contained"
-                                    onClick={handleNext}
+                                    onClick={makePayment}
                                     sx={{ mt: 3, ml: 1 }}
                                 >
                                     {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
