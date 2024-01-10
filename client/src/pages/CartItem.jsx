@@ -8,7 +8,7 @@ import { NavLink, Link } from "react-router-dom";
 
 const CartItem = () => {
 
-    const { token, API_BASE_URL, addToCart, cartCount } = useContext(AuthContext);
+    const { token, API_BASE_URL, addToCart, cartCount, cartItemCounts } = useContext(AuthContext);
     const [cartItemDetail, setCartItemDetail] = useState([]);
     const [grandTotal, setGrandTotal] = useState(0);
     // console.log(singleItem);
@@ -97,6 +97,8 @@ const CartItem = () => {
                             showConfirmButton: false,
                             timer: 1500
                         });
+                        fetchCartItems();
+
                     } else {
                         const errorResponse = await response.json();
                         Swal.fire({
@@ -128,65 +130,65 @@ const CartItem = () => {
 
     return (
         <>
-            <div className='cartitems'>
-                <div className="cartItems-format-main">
-                    <p>Image</p>
-                    <p>Product Name</p>
-                    <p>Price</p>
-                    <p>Quantity</p>
-                    <p>Total</p>
-                    <p>Remove</p>
-                </div>
-                <hr />
-                <div>
-                    {cartItemDetail[0] &&
+            <table className='table cart-table mb-0 table-responsive-sm'>
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Product</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Qty</th>
+                        <th className='text-right'> <span id="amount" className='amount'>Total Amount</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                        cartItemDetail[0] &&
                         cartItemDetail[0]['cartitem'].map((eachElement, index) => {
                             const { productId, _id } = eachElement;
                             return (
-
-                                <div className="cartitems-format cartItems-format-main" key={index}>
-                                    <img src={eachElement.productImage} alt="product image" className='carticon-product-icon' />
-                                    <p>{eachElement.productName}</p>
-                                    <p>&#8377;{eachElement.productPrice}</p>
-                                    <p>
-                                        <span><CiCircleMinus className='qty' onClick={() => { decreaseCartItem(_id) }} /></span>
-                                        <span className='qty-num'>{eachElement.quantity}</span>
-                                        <span><CiCirclePlus className='qty' onClick={() => { increaseCartItem(productId) }} /></span>
-                                    </p>
-                                    <p>&#8377;{eachElement.quantity * eachElement.productPrice}</p>
-                                    <DeleteIcon onClick={() => deleteCartItem(eachElement._id)} className='delete-icon' />
-                                </div>
+                                <>
+                                    <tr >
+                                        <td >
+                                            <button className='prdct-delete'
+                                                onClick={() => deleteCartItem(eachElement._id)}
+                                            ><DeleteIcon /> </button>
+                                        </td>
+                                        <td><div className='product-img'><img src={eachElement.productImage} alt="" /></div></td>
+                                        <td><div className='product-name'><p>{eachElement.productName}</p></div></td>
+                                        <td>&#8377;{eachElement.productPrice}</td>
+                                        <td>
+                                            <div className="prdct-qty-container">
+                                                <button className='prdct-qty-btn' type='button'
+                                                    onClick={() => { decreaseCartItem(_id) }}
+                                                >
+                                                    <CiCircleMinus />
+                                                </button>
+                                                <input type="text" className='qty-input-box' value={eachElement.quantity} disabled name="" id="" />
+                                                <button className='prdct-qty-btn' type='button' onClick={() => { increaseCartItem(productId) }}>
+                                                    <CiCirclePlus />
+                                                </button>
+                                            </div>
+                                        </td>
+                                        <td className='text-right'>&#8377;{eachElement.quantity * eachElement.productPrice}</td>
+                                    </tr>
+                                </>
                             )
                         })
                     }
-                    <hr />
-                </div>
-
-                <div className="cartitems-down">
-                    <div className="cartitems-total">
-                        <h1>Cart Totals</h1>
-                        <div>
-                            <div className="cartitems-total-item">
-                                <p>Subtotal</p>
-                                <p>&#8377;{grandTotal && grandTotal}</p>
-                            </div>
-                            <hr />
-                            <div className="cartitems-total-item">
-                                <p>Shipping fee</p>
-                                <p>Free</p>
-
-                            </div>
-                            <hr />
-                            <div className="cartitems-total-item">
-                                <h3>Total</h3>
-                                <h3>&#8377;{grandTotal && grandTotal}</h3>
-                            </div>
-                        </div>
-                        <NavLink to="/checkout"><button className='checkout'>Checkout</button></NavLink>
-
-                    </div>
-                </div>
-            </div>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th colSpan={2}>&nbsp;</th>
+                        <th className='text-right2'>Items In Cart <span className='ml-2 mr-2'> : </span><span className='text-left'>{(cartItemCounts > 0) ? cartItemCounts : null}</span></th>
+                        <th className='text-right2'>Total Price<span className='ml-2 mr-2'> : </span><span className='text-left'>&#8377;{grandTotal && grandTotal}</span></th>
+                        <th >
+                            <NavLink to="/checkout"><button className='btn btn-success' type='button'>Checkout</button></NavLink>
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
         </>
     )
 }
