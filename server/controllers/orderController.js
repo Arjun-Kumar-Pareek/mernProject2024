@@ -58,11 +58,9 @@ module.exports.createOrder = async (req, res) => {
             payment_method_types: ["card"],
             line_items: lineItems,
             mode: "payment",
-            success_url: "http://localhost:5173/sucess",
-            cancel_url: "http://localhost:5173/cancel",
+            success_url: `http://localhost:5173/sucess/id=${savedOrder._id}`,
+            cancel_url: `http://localhost:5173/cancel/id=${savedOrder._id}`,
         });
-
-
         res.json({ id: session.id })
 
     } catch (error) {

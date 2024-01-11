@@ -12,20 +12,12 @@ import Button from '@mui/material/Button';
 import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import AddressForm from './AddressForm';
-import PaymentForm from './PaymentForm';
 import Review from './Review';
 import { createOrder } from '../../services/api';
 import { useState, useContext, useEffect } from "react";
-import { AuthContext } from "../../store/auth";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { loadStripe } from '@stripe/stripe-js';
-import {
-    PaymentElement,
-    Elements,
-    useStripe,
-    useElements,
-} from '@stripe/react-stripe-js';
+
 
 function Copyright() {
     return (
@@ -40,15 +32,13 @@ function Copyright() {
     );
 }
 
-const steps = ['Shipping address', 'Payment details', 'Review your order'];
+const steps = ['Shipping address', 'Review your order'];
 
 function getStepContent(step) {
     switch (step) {
         case 0:
             return <AddressForm />;
         case 1:
-            return <PaymentForm />;
-        case 2:
             return <Review />;
         default:
             throw new Error('Unknown step');
@@ -58,106 +48,13 @@ function getStepContent(step) {
 export default function Checkout() {
 
     const [activeStep, setActiveStep] = React.useState(0);
-    const { token, API_BASE_URL } = useContext(AuthContext);
-
     const handleNext = async () => {
         setActiveStep(activeStep + 1);
-        if (activeStep === 2) {
-            const response = await createOrder(token, {
-                "totalAmount": 27410,
-                "orderItems": [
-                    {
-                        "productId": "650a802c629b22b4b347b528",
-                        "productName": "Testing",
-                        "quantity": 1,
-                        "price": 1299
-                    },
-                    {
-                        "productId": "650a7fcc629b22b4b347b522",
-                        "productName": "Testing2",
-                        "quantity": 2,
-                        "price": 6556
-                    }
-                ],
-                "paymentMode": "Cash On Delivery",
-                "deliveryDetails": {
-                    "address": "A3 Mall Road",
-                    "state": "Rajshthan",
-                    "city": "Jaipur",
-                    "postalCode": "302039"
-                }
-            });
-
-            // console.log(response.data.success);
-            if (response.data.success) {
-                toast.success(
-                    response.data.message
-                );
-            } else {
-                const errorResponse = await response;
-                toast.error(
-                    errorResponse.message
-                );
-            }
-        }
-
     };
 
     const handleBack = () => {
         setActiveStep(activeStep - 1);
     };
-
-
-    // payment integration
-    const makePayment = async () => {
-        const stripe = await loadStripe("pk_test_51OGy4BSEWW2cslHi0f17aZrw80XjrGri3c1xrmRkBuObWYSk5DmKU86w3pH5aN0BOXDUxx180N70ZiDQ3b7B0jmq00fuJJQGlF");
-
-        const body = {
-            "totalAmount": 27410,
-            "orderItems": [
-                {
-                    "productId": "650a802c629b22b4b347b528",
-                    "productName": "Testing",
-                    "quantity": 1,
-                    "price": 1299
-                },
-                {
-                    "productId": "650a7fcc629b22b4b347b522",
-                    "productName": "Testing2",
-                    "quantity": 2,
-                    "price": 6556
-                }
-            ],
-            "paymentMode": "Cash On Delivery",
-            "deliveryDetails": {
-                "address": "A3 Mall Road",
-                "state": "Rajshthan",
-                "city": "Jaipur",
-                "postalCode": "302039"
-            }
-        }
-
-        const headers = {
-            "Content-Type": "application/json",
-            "Authorization": token,
-        }
-        const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
-            method: "POST",
-            headers: headers,
-            body: JSON.stringify(body)
-        });
-
-        const session = await response.json();
-        console.log(session);
-        const result = stripe.redirectToCheckout({
-            sessionId: session.id
-        });
-
-        if (result.error) {
-            console.log(result.error);
-        }
-    }
-
 
     return (
         <React.Fragment>
@@ -208,7 +105,7 @@ export default function Checkout() {
 
                                 <Button
                                     variant="contained"
-                                    onClick={makePayment}
+                                    onClick={handleNext}
                                     sx={{ mt: 3, ml: 1 }}
                                 >
                                     {activeStep === steps.length - 1 ? 'Place order' : 'Next'}

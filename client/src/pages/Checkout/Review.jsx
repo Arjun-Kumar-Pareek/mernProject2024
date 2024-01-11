@@ -6,6 +6,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
 import { AuthContext } from '../../store/auth';
+import { loadStripe } from '@stripe/stripe-js';
+import {
+    PaymentElement,
+    Elements,
+    useStripe,
+    useElements,
+} from '@stripe/react-stripe-js';
 
 const products = [
     {
@@ -40,7 +47,8 @@ const payments = [
 ];
 
 export default function Review() {
-    const { token, } = useContext(AuthContext);
+    const { token, deliveryDetails } = useContext(AuthContext);
+    console.log(deliveryDetails);
 
     const [cartItemDetail, setCartItemDetail] = useState([]);
     const [grandTotal, setGrandTotal] = useState(0);
@@ -70,7 +78,65 @@ export default function Review() {
 
     useEffect(() => {
         fetchCartItems();
-    }, [])
+    }, []);
+
+
+
+    const makePayment = async () => {
+        const stripe = await loadStripe("pk_test_51OGy4BSEWW2cslHi0f17aZrw80XjrGri3c1xrmRkBuObWYSk5DmKU86w3pH5aN0BOXDUxx180N70ZiDQ3b7B0jmq00fuJJQGlF");
+
+        const body = {
+            "totalAmount": 14441,
+            "orderItems": [
+                {
+                    "productId": "650a802c629b22b4b347b528",
+                    "productName": "Testing",
+                    "quantity": 1,
+                    "price": 1299
+                },
+                {
+                    "productId": "650a7fcc629b22b4b347b522",
+                    "productName": "Testing2",
+                    "quantity": 2,
+                    "price": 6556
+                }
+            ],
+            "paymentMode": "Cash On Delivery",
+            "deliveryDetails": deliveryDetails
+        }
+
+        const headers = {
+            "Content-Type": "application/json",
+            "Authorization": token,
+        };
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify(body)
+            });
+
+            const session = await response.json();
+            const result = await stripe.redirectToCheckout({
+                sessionId: session.id
+            });
+
+            // Check if the payment was successful
+            if (result.error) {
+                console.log("Error during payment:", result.error);
+            } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
+                console.log("Payment succeeded!");
+                // You can perform additional actions here after a successful payment
+            } else {
+                console.log("Payment not completed or failed.");
+            }
+        } catch (error) {
+            console.error("Error making payment:", error);
+        }
+    };
+
+
 
     return (
         <React.Fragment>

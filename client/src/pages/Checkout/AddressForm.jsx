@@ -5,10 +5,13 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import { AuthContext } from "../../store/auth";
 
 export default function AddressForm() {
 
-    const [deliveryDetails, setDeliveryDetails] = useState({
+    const { setDeliveryDetails } = useContext(AuthContext);
+
+    const [address, setAddress] = useState({
         address: "",
         city: "",
         state: "",
@@ -19,11 +22,13 @@ export default function AddressForm() {
         let name = e.target.name;
         let value = e.target.value;
 
-        setDeliveryDetails({
-            ...deliveryDetails,
+        setAddress({
+            ...address,
             [name]: value,
         })
     };
+
+    setDeliveryDetails(address);
 
     return (
         <React.Fragment>
@@ -40,7 +45,7 @@ export default function AddressForm() {
                         fullWidth
                         autoComplete="shipping address-line1"
                         variant="standard"
-                        value={deliveryDetails.address}
+                        value={address.address}
                         onChange={handleInput}
                     />
                 </Grid>
@@ -54,7 +59,7 @@ export default function AddressForm() {
                         fullWidth
                         autoComplete="shipping address-level2"
                         variant="standard"
-                        value={deliveryDetails.city}
+                        value={address.city}
                         onChange={handleInput}
                     />
                 </Grid>
@@ -65,7 +70,7 @@ export default function AddressForm() {
                         label="State/Province/Region"
                         fullWidth
                         variant="standard"
-                        value={deliveryDetails.state}
+                        value={address.state}
                         onChange={handleInput}
                     />
                 </Grid>
@@ -78,7 +83,7 @@ export default function AddressForm() {
                         fullWidth
                         autoComplete="shipping postal-code"
                         variant="standard"
-                        value={deliveryDetails.postalCode}
+                        value={address.postalCode}
                         onChange={handleInput}
                     />
                 </Grid>

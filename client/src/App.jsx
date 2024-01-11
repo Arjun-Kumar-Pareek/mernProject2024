@@ -58,8 +58,8 @@ const App = () => {
           <Route path="/service" element={<Service />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/sucess" element={<PaymentSuccess />} />
-          <Route path="/cancel" element={<PaymentCancel />} />
+          <Route path="/sucess/:id" element={<PaymentSuccess />} />
+          <Route path="/cancel/:id" element={<PaymentCancel />} />
           <Route path="/product-details/:id" element={<ProductDetails />} />
           {isLoggedIn && (<Route path="/cart-item" element={<CartItem />} />)}
           {isLoggedIn && (<Route path="/user-profile" element={<UserProfile />} />)}

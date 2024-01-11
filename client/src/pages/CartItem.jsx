@@ -98,6 +98,7 @@ const CartItem = () => {
                             timer: 1500
                         });
                         fetchCartItems();
+                        cartCount();
 
                     } else {
                         const errorResponse = await response.json();

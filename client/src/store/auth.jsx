@@ -16,9 +16,13 @@ export const AuthProvider = ({ children }) => {
   const [authData, setAuthData] = useState({});
   const [cartItemCounts, setCartItemCounts] = useState(0);
 
+  const [deliveryDetails, setDeliveryDetails] = useState({});
+
   const hasRole = (role) => {
     return isLoggedIn && authData.role === role;
   }
+
+
 
   // const [loggedInUser, setLoggedInUser] = useState(null);
 
@@ -134,7 +138,9 @@ export const AuthProvider = ({ children }) => {
     addToCart,
     cartItemCounts,
     API_BASE_URL,
-    cartCount
+    cartCount,
+    setDeliveryDetails,
+    deliveryDetails
   };
 
   return (
