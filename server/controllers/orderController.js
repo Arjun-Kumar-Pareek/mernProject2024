@@ -1,5 +1,9 @@
 const Order = require("../models/orderModel");
 const OrderItem = require("../models/orderItemModel");
+const { ObjectId } = require("mongodb");
+const path = require("path");
+const fs = require("fs");
+
 // require("dotenv").config();
 const stripe = require("stripe")('sk_test_51OGy4BSEWW2cslHik2PtEBrFhq4uJL33DD428TzkcPZtAYC7oY70dzr0jHc409HHa9DE1tmtMh9a8bfdrPZCMs6c00d8UNy4R5');
 
@@ -70,5 +74,44 @@ module.exports.createOrder = async (req, res) => {
             message: "Error in createOrder function",
             error,
         });
+    }
+};
+
+module.exports.changeOrderStatus = async (req, res) => {
+    try {
+        const { _id } = req.query;
+        const findOrder = await Order.findOne({ _id: new ObjectId(_id) });
+
+        if (findOrder) {
+            if (findOrder.orderStatus == "Pending") {
+                const changeStatus = await Order.updateOne({ _id }, { $set: { orderStatus: "Processing" } });
+            } else if (findOrder.orderStatus == "Processing") {
+                const changeStatus = await Order.updateOne({ _id }, { $set: { orderStatus: "Shipped" } });
+            } else if (findOrder.orderStatus == "Shipped") {
+                const changeStatus = await Order.updateOne({ _id }, { $set: { orderStatus: "Delivered" } });
+            }
+            res.status(200).send({ success: true, message: "Status Updated Successfully" });
+        } else {
+            res.status(400).send({ success: false, message: "Order not found" });
+        }
+
+    } catch (error) {
+        console.log("Error from changeOrderStatus function", error);
+    }
+};
+
+module.exports.viewOrder = async (req, res) => {
+    try {
+        const { _id } = req.user.data;
+        const findOrder = await Order.find({ userId: new ObjectId(_id) }, { createdAt: 0, updatedAt: 0 })
+            .select("-__v")
+            .populate({ path: "orderItems" })
+        if (findOrder) {
+            res.status(200).send({ success: true, message: "Order viewed successfully", data: findOrder });
+        } else {
+            res.status(200).send({ success: true, message: "Order not Found" });
+        }
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message });
     }
 };

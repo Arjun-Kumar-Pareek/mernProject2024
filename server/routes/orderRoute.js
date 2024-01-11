@@ -9,12 +9,22 @@ const auth = require("../middleware/auth");
 
 const orderController = require("../controllers/orderController");
 
-//Add To Cart Route
+//Create Order Route
 orderRoute.post(
     "/create-checkout-session", auth,
     orderController.createOrder
 );
 
+//Change Order Status
+orderRoute.get(
+    "/change-order-status", auth,
+    orderController.changeOrderStatus
+);
 
+//View Order
+orderRoute.get(
+    "/view-order", auth,
+    orderController.viewOrder
+);
 
 module.exports = orderRoute;
