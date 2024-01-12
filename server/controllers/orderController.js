@@ -1,5 +1,6 @@
 const Order = require("../models/orderModel");
 const OrderItem = require("../models/orderItemModel");
+const Product = require("../models/productModel");
 const { ObjectId } = require("mongodb");
 const path = require("path");
 const fs = require("fs");
@@ -105,7 +106,22 @@ module.exports.viewOrder = async (req, res) => {
         const { _id } = req.user.data;
         const findOrder = await Order.find({ userId: new ObjectId(_id) }, { createdAt: 0, updatedAt: 0 })
             .select("-__v")
-            .populate({ path: "orderItems" })
+            .populate({
+                path: "orderItems",
+                populate: {
+                    path: "productId",
+                    model: "Product",
+                    populate: [{
+                        path: "categoryId",
+                        model: "Category"
+                    },
+                    {
+                        path: "companyId",
+                        model: "Company"
+                    }]
+                }
+            });
+
         if (findOrder) {
             res.status(200).send({ success: true, message: "Order viewed successfully", data: findOrder });
         } else {

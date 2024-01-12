@@ -5,11 +5,14 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
-import { AuthContext } from "../../store/auth";
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
-export default function AddressForm() {
 
-    const { setDeliveryDetails } = useContext(AuthContext);
+
+export default function AddressForm(props) {
+
+    const { setcompleteAddress, setActiveStep } = props
 
     const [address, setAddress] = useState({
         address: "",
@@ -17,6 +20,37 @@ export default function AddressForm() {
         state: "",
         postalCode: ""
     });
+
+    const [errorFields, seterrorFields] = useState({
+        address: false,
+        city: false,
+        state: false,
+        postalCode: false
+    })
+
+    const handleSubmit = async (e) => {
+
+        if (address.address == '' || address.city == '' || address.state == '' || address.postalCode == '') {
+            seterrorFields({
+                address: (address.address) ? false : true,
+                city: (address.city) ? false : true,
+                state: (address.state) ? false : true,
+                postalCode: (address.postalCode) ? false : true
+            })
+        } else {
+            seterrorFields({
+                address: false,
+                city: false,
+                state: false,
+                postalCode: false
+            });
+            setcompleteAddress(address);
+            setActiveStep((cur) => {
+                return cur + 1;
+            });
+        }
+    }
+
 
     const handleInput = (e) => {
         let name = e.target.name;
@@ -28,7 +62,6 @@ export default function AddressForm() {
         })
     };
 
-    setDeliveryDetails(address);
 
     return (
         <React.Fragment>
@@ -46,6 +79,7 @@ export default function AddressForm() {
                         autoComplete="shipping address-line1"
                         variant="standard"
                         value={address.address}
+                        error={errorFields.address}
                         onChange={handleInput}
                     />
                 </Grid>
@@ -60,6 +94,7 @@ export default function AddressForm() {
                         autoComplete="shipping address-level2"
                         variant="standard"
                         value={address.city}
+                        error={errorFields.city}
                         onChange={handleInput}
                     />
                 </Grid>
@@ -71,6 +106,7 @@ export default function AddressForm() {
                         fullWidth
                         variant="standard"
                         value={address.state}
+                        error={errorFields.state}
                         onChange={handleInput}
                     />
                 </Grid>
@@ -84,6 +120,7 @@ export default function AddressForm() {
                         autoComplete="shipping postal-code"
                         variant="standard"
                         value={address.postalCode}
+                        error={errorFields.postalCode}
                         onChange={handleInput}
                     />
                 </Grid>
@@ -93,6 +130,18 @@ export default function AddressForm() {
                         label="Use this address for payment details"
                     />
                 </Grid>
+                <Grid item xs={12}>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button
+                            variant="contained"
+                            sx={{ mt: 3, ml: 1 }}
+                            onClick={handleSubmit}
+                        >Next
+                        </Button>
+                    </Box>
+                </Grid>
+
             </Grid>
         </React.Fragment>
     );

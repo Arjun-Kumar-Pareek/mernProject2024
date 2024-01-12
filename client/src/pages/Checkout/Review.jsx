@@ -46,9 +46,11 @@ const payments = [
     { name: 'Expiry date', detail: '04/2024' },
 ];
 
-export default function Review() {
+export default function Review(props) {
     const { token, deliveryDetails } = useContext(AuthContext);
     console.log(deliveryDetails);
+
+    const { completeAddress } = props;
 
     const [cartItemDetail, setCartItemDetail] = useState([]);
     const [grandTotal, setGrandTotal] = useState(0);
@@ -161,13 +163,14 @@ export default function Review() {
             </List>
             <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
-                    <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
-                        Shipping
+                    <Typography variant="h4" gutterBottom sx={{ mt: 2 }}>
+                        Shipping Address
                     </Typography>
-                    <Typography gutterBottom>John Smith</Typography>
-                    <Typography gutterBottom>{addresses.join(', ')}</Typography>
+                    <Typography>{completeAddress.address} , </Typography>
+                    <Typography>{completeAddress.city},{completeAddress.state}</Typography>
+                    <Typography>{completeAddress.postalCode}</Typography>
                 </Grid>
-                <Grid item container direction="column" xs={12} sm={6}>
+                {/* <Grid item container direction="column" xs={12} sm={6}>
                     <Typography variant="h6" gutterBottom sx={{ mt: 2 }}>
                         Payment details
                     </Typography>
@@ -183,7 +186,7 @@ export default function Review() {
                             </React.Fragment>
                         ))}
                     </Grid>
-                </Grid>
+                </Grid> */}
             </Grid>
         </React.Fragment >
     );

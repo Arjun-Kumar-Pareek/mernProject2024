@@ -19,35 +19,23 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 
-function Copyright() {
-    return (
-        <Typography variant="body2" color="text.secondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="#">
-                Bharat Tech
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-        </Typography>
-    );
-}
-
-const steps = ['Shipping address', 'Review your order'];
-
-function getStepContent(step) {
-    switch (step) {
-        case 0:
-            return <AddressForm />;
-        case 1:
-            return <Review />;
-        default:
-            throw new Error('Unknown step');
-    }
-}
-
 export default function Checkout() {
 
-    const [activeStep, setActiveStep] = React.useState(0);
+    const steps = ['Shipping address', 'Review your order'];
+
+    function getStepContent(step) {
+        switch (step) {
+            case 0:
+                return <AddressForm setcompleteAddress={setcompleteAddress} setActiveStep={setActiveStep} />;
+            case 1:
+                return <Review completeAddress={completeAddress} />;
+            default:
+                throw new Error('Unknown step');
+        }
+    }
+    const [activeStep, setActiveStep] = useState(0);
+    const [completeAddress, setcompleteAddress] = useState({});
+    // console.log(completeAddress);
     const handleNext = async () => {
         setActiveStep(activeStep + 1);
     };
@@ -103,18 +91,17 @@ export default function Checkout() {
                                     </Button>
                                 )}
 
-                                <Button
+                                {/* <Button
                                     variant="contained"
                                     onClick={handleNext}
                                     sx={{ mt: 3, ml: 1 }}
                                 >
                                     {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
-                                </Button>
+                                </Button> */}
                             </Box>
                         </React.Fragment>
                     )}
                 </Paper>
-                <Copyright />
             </Container>
         </React.Fragment>
     );
