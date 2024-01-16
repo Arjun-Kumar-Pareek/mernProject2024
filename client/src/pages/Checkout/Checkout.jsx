@@ -85,11 +85,11 @@ export default function Checkout() {
                         <React.Fragment>
                             {getStepContent(activeStep)}
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                {activeStep !== 0 && (
+                                {/* {activeStep !== 0 && (
                                     <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
                                         Back
                                     </Button>
-                                )}
+                                )} */}
 
                                 {/* <Button
                                     variant="contained"

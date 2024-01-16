@@ -10,19 +10,14 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   // State to store the authentication token
   const [token, setToken] = useState(() => localStorage.getItem("token") || "");
-
   // State to determine if the user is logged in
   const [isLoggedIn, setIsLoggedIn] = useState(!!token);
   const [authData, setAuthData] = useState({});
   const [cartItemCounts, setCartItemCounts] = useState(0);
 
-  const [deliveryDetails, setDeliveryDetails] = useState({});
-
   const hasRole = (role) => {
     return isLoggedIn && authData.role === role;
   }
-
-
 
   // const [loggedInUser, setLoggedInUser] = useState(null);
 
@@ -138,9 +133,7 @@ export const AuthProvider = ({ children }) => {
     addToCart,
     cartItemCounts,
     API_BASE_URL,
-    cartCount,
-    setDeliveryDetails,
-    deliveryDetails
+    cartCount
   };
 
   return (

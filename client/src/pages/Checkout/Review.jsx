@@ -7,6 +7,10 @@ import ListItemText from '@mui/material/ListItemText';
 import Grid from '@mui/material/Grid';
 import { AuthContext } from '../../store/auth';
 import { loadStripe } from '@stripe/stripe-js';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Swal from 'sweetalert2';
+
 import {
     PaymentElement,
     Elements,
@@ -47,11 +51,9 @@ const payments = [
 ];
 
 export default function Review(props) {
-    const { token, deliveryDetails } = useContext(AuthContext);
-    console.log(deliveryDetails);
+    const { token, API_BASE_URL } = useContext(AuthContext);
 
     const { completeAddress } = props;
-
     const [cartItemDetail, setCartItemDetail] = useState([]);
     const [grandTotal, setGrandTotal] = useState(0);
 
@@ -84,58 +86,73 @@ export default function Review(props) {
 
 
 
+
     const makePayment = async () => {
-        const stripe = await loadStripe("pk_test_51OGy4BSEWW2cslHi0f17aZrw80XjrGri3c1xrmRkBuObWYSk5DmKU86w3pH5aN0BOXDUxx180N70ZiDQ3b7B0jmq00fuJJQGlF");
 
-        const body = {
-            "totalAmount": 14441,
-            "orderItems": [
-                {
-                    "productId": "650a802c629b22b4b347b528",
-                    "productName": "Testing",
-                    "quantity": 1,
-                    "price": 1299
-                },
-                {
-                    "productId": "650a7fcc629b22b4b347b522",
-                    "productName": "Testing2",
-                    "quantity": 2,
-                    "price": 6556
+        Swal.fire({
+            title: "Choose Payment Method",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Online",
+            denyButtonText: `Cash On Delivery`
+        }).then(async (result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+
+                const stripe = await loadStripe("pk_test_51OGy4BSEWW2cslHi0f17aZrw80XjrGri3c1xrmRkBuObWYSk5DmKU86w3pH5aN0BOXDUxx180N70ZiDQ3b7B0jmq00fuJJQGlF");
+
+                const cItemsArr = cartItemDetail.map((item) => {
+                    // console.log(item.productId.name);
+                    const itmeObj = {
+                        "productId": item.productId._id,
+                        "productName": item.productId.name,
+                        "quantity": item.quantity,
+                        "price": item.productPrice
+                    }
+                    return itmeObj;
+                });
+
+                const body = {
+                    "totalAmount": grandTotal,
+                    "orderItems": cItemsArr,
+                    "paymentMode": "Online",
+                    "deliveryDetails": completeAddress
                 }
-            ],
-            "paymentMode": "Cash On Delivery",
-            "deliveryDetails": deliveryDetails
-        }
 
-        const headers = {
-            "Content-Type": "application/json",
-            "Authorization": token,
-        };
+                const headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": token,
+                };
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
-                method: "POST",
-                headers: headers,
-                body: JSON.stringify(body)
-            });
+                try {
+                    const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
+                        method: "POST",
+                        headers: headers,
+                        body: JSON.stringify(body)
+                    });
 
-            const session = await response.json();
-            const result = await stripe.redirectToCheckout({
-                sessionId: session.id
-            });
+                    const session = await response.json();
+                    const result = await stripe.redirectToCheckout({
+                        sessionId: session.id
+                    });
 
-            // Check if the payment was successful
-            if (result.error) {
-                console.log("Error during payment:", result.error);
-            } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
-                console.log("Payment succeeded!");
-                // You can perform additional actions here after a successful payment
-            } else {
-                console.log("Payment not completed or failed.");
+                    // Check if the payment was successful
+                    if (result.error) {
+                        console.log("Error during payment:", result.error);
+                    } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
+                        console.log("Payment succeeded!");
+                        // You can perform additional actions here after a successful payment
+                    } else {
+                        console.log("Payment not completed or failed.");
+                    }
+                } catch (error) {
+                    console.error("Error making payment:", error);
+                }
+                Swal.fire("Ordered Success!", "", "success");
+            } else if (result.isDenied) {
+                Swal.fire("Changes are not saved", "", "info");
             }
-        } catch (error) {
-            console.error("Error making payment:", error);
-        }
+        });
     };
 
 
@@ -187,6 +204,17 @@ export default function Review(props) {
                         ))}
                     </Grid>
                 </Grid> */}
+                <Grid item xs={12}>
+
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button
+                            variant="contained"
+                            sx={{ mt: 3, ml: 1 }}
+                            onClick={makePayment}
+                        >Proceed Pay
+                        </Button>
+                    </Box>
+                </Grid>
             </Grid>
         </React.Fragment >
     );
