@@ -10,13 +10,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Swal from 'sweetalert2';
-
-import {
-    PaymentElement,
-    Elements,
-    useStripe,
-    useElements,
-} from '@stripe/react-stripe-js';
+import { useNavigate } from "react-router-dom";
 
 const products = [
     {
@@ -51,7 +45,7 @@ const payments = [
 ];
 
 export default function Review(props) {
-    const { token, API_BASE_URL } = useContext(AuthContext);
+    const { token, API_BASE_URL, clearCart, cartCount } = useContext(AuthContext);
 
     const { completeAddress } = props;
     const [cartItemDetail, setCartItemDetail] = useState([]);
@@ -85,10 +79,8 @@ export default function Review(props) {
     }, []);
 
 
-
-
+    const navigate = useNavigate();
     const makePayment = async () => {
-
         Swal.fire({
             title: "Choose Payment Method",
             showDenyButton: true,
@@ -117,7 +109,7 @@ export default function Review(props) {
                     "orderItems": cItemsArr,
                     "paymentMode": "Online",
                     "deliveryDetails": completeAddress
-                }
+                };
 
                 const headers = {
                     "Content-Type": "application/json",
@@ -141,7 +133,6 @@ export default function Review(props) {
                         console.log("Error during payment:", result.error);
                     } else if (result.paymentIntent && result.paymentIntent.status === 'succeeded') {
                         console.log("Payment succeeded!");
-                        // You can perform additional actions here after a successful payment
                     } else {
                         console.log("Payment not completed or failed.");
                     }
@@ -150,7 +141,50 @@ export default function Review(props) {
                 }
                 Swal.fire("Ordered Success!", "", "success");
             } else if (result.isDenied) {
-                Swal.fire("Changes are not saved", "", "info");
+                const cItemsArr = cartItemDetail.map((item) => {
+                    // console.log(item.productId.name);
+                    const itmeObj = {
+                        "productId": item.productId._id,
+                        "productName": item.productId.name,
+                        "quantity": item.quantity,
+                        "price": item.productPrice
+                    }
+                    return itmeObj;
+                });
+
+                const body = {
+                    "totalAmount": grandTotal,
+                    "orderItems": cItemsArr,
+                    "paymentMode": "Cash On Delivery",
+                    "deliveryDetails": completeAddress
+                };
+
+                const headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": token,
+                };
+
+                try {
+                    const response = await fetch(`${API_BASE_URL}/create-checkout-session`, {
+                        method: "POST",
+                        headers: headers,
+                        body: JSON.stringify(body)
+                    });
+
+                    if (response.ok) {
+                        const completeRes = await response.json();
+
+                    } else {
+                        const errorResponse = await response.json();
+
+                    }
+                } catch (error) {
+                    console.error("Error in Cash on delivery function", error);
+                }
+                navigate("/my-orders")
+                clearCart();
+                cartCount();
+                Swal.fire("Ordered Success!", "", "success");
             }
         });
     };

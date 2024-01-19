@@ -114,6 +114,25 @@ export const AuthProvider = ({ children }) => {
 
   };
 
+  const clearCart = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/clear-cart", {
+        method: "GET",
+        headers: {
+          "Authorization": token,
+        },
+      });
+      if (response.ok) {
+        const completeRes = await response.json();
+        const cartData = completeRes.data;
+      } else {
+        const errorResponse = await response.json();
+      }
+    } catch (error) {
+      console.log("Error on clearCart function", error);
+    }
+  };
+
   // useEffect to update isLoggedIn based on token changes
   useEffect(() => {
     setIsLoggedIn(!!token);
@@ -133,7 +152,8 @@ export const AuthProvider = ({ children }) => {
     addToCart,
     cartItemCounts,
     API_BASE_URL,
-    cartCount
+    cartCount,
+    clearCart
   };
 
   return (

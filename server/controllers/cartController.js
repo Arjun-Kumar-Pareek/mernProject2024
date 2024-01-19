@@ -122,5 +122,17 @@ module.exports.deleteCartItem = async (req, res) => {
     }
 };
 
-
-
+module.exports.clearCart = async (req, res) => {
+    try {
+        const { _id } = req.user.data;
+        const findUserId = await Cart.find({ userId: new ObjectId(_id) });
+        if (findUserId) {
+            await Cart.deleteMany({ userId: new ObjectId(_id) });
+            res.status(200).send({ success: true, message: "Items delete successfully" });
+        } else {
+            res.status(400).send({ success: false, message: "Items not found" });
+        }
+    } catch (error) {
+        res.status(400).send({ success: false, message: "error in deleteCartItem function : ", error });
+    }
+};

@@ -39,4 +39,10 @@ cartRoute.get(
     cartController.decreaseCartItem
 );
 
+//Clear Cart Route
+cartRoute.get(
+    "/clear-cart", auth,
+    cartController.clearCart
+)
+
 module.exports = cartRoute;

@@ -43,30 +43,34 @@ module.exports.createOrder = async (req, res) => {
 
         const savedOrder = await createOrder.save();
 
-        const lineItems = orderItems.map((product) => ({
-            price_data: {
-                currency: "inr",
-                product_data: {
-                    name: product.productName,
-                    images: [product.imgdata]
+        if (paymentMode == "Online") {
 
+            const lineItems = orderItems.map((product) => ({
+                price_data: {
+                    currency: "inr",
+                    product_data: {
+                        name: product.productName,
+                        images: [product.imgdata]
+                    },
+                    unit_amount: product.price * 100,
                 },
-                unit_amount: product.price * 100,
-            },
-            quantity: product.quantity
-        }));
+                quantity: product.quantity
+            }));
 
-        // console.log(lineItems);
-        // return false;
+            const session = await stripe.checkout.sessions.create({
+                payment_method_types: ["card"],
+                line_items: lineItems,
+                mode: "payment",
+                success_url: `http://localhost:5173/sucess/id=${savedOrder._id}`,
+                cancel_url: `http://localhost:5173/cancel/id=${savedOrder._id}`,
+            });
 
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ["card"],
-            line_items: lineItems,
-            mode: "payment",
-            success_url: `http://localhost:5173/sucess/id=${savedOrder._id}`,
-            cancel_url: `http://localhost:5173/cancel/id=${savedOrder._id}`,
-        });
-        res.json({ id: session.id })
+            res.json({ id: session.id })
+
+        } else {
+            res.status(200).send({ success: true, message: "Create Order Successfully" })
+        }
+
 
     } catch (error) {
         console.error("Error in createOrder function:", error);
@@ -104,7 +108,7 @@ module.exports.changeOrderStatus = async (req, res) => {
 module.exports.viewOrder = async (req, res) => {
     try {
         const { _id } = req.user.data;
-        const findOrder = await Order.find({ userId: new ObjectId(_id) }, { createdAt: 0, updatedAt: 0 })
+        const findOrder = await Order.find({ userId: new ObjectId(_id) }, { updatedAt: 0 })
             .select("-__v")
             .populate({
                 path: "orderItems",

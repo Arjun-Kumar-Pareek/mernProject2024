@@ -27,6 +27,7 @@ import SearchProduct from "./pages/SearchProduct";
 import Checkout from "./pages/Checkout/Checkout";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancel from "./pages/PaymentCancel";
+import MyOrders from "./pages/MyOrders";
 
 const App = () => {
 
@@ -65,6 +66,7 @@ const App = () => {
           {isLoggedIn && (<Route path="/user-profile" element={<UserProfile />} />)}
           {isLoggedIn && (<Route path="/update-profile" element={<UpdateProfile />} />)}
           {isLoggedIn && (<Route path="/checkout" element={<Checkout />} />)}
+          {isLoggedIn && (<Route path="/my-orders" element={<MyOrders />} />)}
 
           {hasRole('admin') && (<Route path="/view-all-user" element={<UsersList />} />)}
           {hasRole('admin') && (<Route path="/view-all-contact" element={<ContactList />} />)}

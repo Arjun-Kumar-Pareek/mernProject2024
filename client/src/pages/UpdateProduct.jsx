@@ -11,9 +11,6 @@ const UpdateProduct = () => {
     const [filesImage, setfilesImage] = useState([])
 
 
-    // console.log(singleProduct.image);
-
-
     useEffect(() => {
         const getProductData = async () => {
             try {
@@ -134,9 +131,9 @@ const UpdateProduct = () => {
                                     name="name"
                                     id="name"
                                     autoComplete="off"
-                                    value={productData.name}
+                                    value={product.name}
                                     onChange={handleInput}
-                                    placeholder="Name"
+                                    placeholder={productData.name}
                                 />
                             </div>
                             <div>
@@ -146,9 +143,9 @@ const UpdateProduct = () => {
                                     name="price"
                                     id="price"
                                     autoComplete="off"
-                                    value={productData.price}
+                                    value={product.price}
                                     onChange={handleInput}
-                                    placeholder="Price"
+                                    placeholder={productData.price}
                                 />
                             </div>
                             <div>
@@ -166,9 +163,9 @@ const UpdateProduct = () => {
                                     name="description"
                                     id="description"
                                     autoComplete="off"
-                                    value={productData.description}
+                                    value={product.description}
                                     onChange={handleInput}
-                                    placeholder="description write here..."
+                                    placeholder={productData.description}
                                     cols="30"
                                     rows="6"
                                 ></textarea>

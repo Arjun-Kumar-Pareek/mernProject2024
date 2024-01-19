@@ -9,10 +9,9 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 
 
-
 export default function AddressForm(props) {
 
-    const { setcompleteAddress, setActiveStep } = props
+    const { setcompleteAddress, setActiveStep } = props;
 
     const [address, setAddress] = useState({
         address: "",
@@ -26,7 +25,7 @@ export default function AddressForm(props) {
         city: false,
         state: false,
         postalCode: false
-    })
+    });
 
     const handleSubmit = async (e) => {
 
@@ -49,8 +48,7 @@ export default function AddressForm(props) {
                 return cur + 1;
             });
         }
-    }
-
+    };
 
     const handleInput = (e) => {
         let name = e.target.name;
@@ -124,12 +122,7 @@ export default function AddressForm(props) {
                         onChange={handleInput}
                     />
                 </Grid>
-                <Grid item xs={12}>
-                    <FormControlLabel
-                        control={<Checkbox color="secondary" name="saveAddress" value="yes" />}
-                        label="Use this address for payment details"
-                    />
-                </Grid>
+
                 <Grid item xs={12}>
 
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>

@@ -340,7 +340,7 @@ module.exports.verifyEmail = async (req, res) => {
   } catch (error) {
     res.status(500).send({ sucess: false, message: error.message })
   }
-}
+};
 
 module.exports.loginUser = async (req, res) => {
   try {
