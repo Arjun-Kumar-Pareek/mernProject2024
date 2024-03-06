@@ -133,7 +133,7 @@ module.exports.viewProduct = async (req, res) => {
                         image: product.image.map((getImage) =>
                             `${process.env.FILE_PATH}/${getImage}`)
                     };
-                })
+                });
             }
             res.status(200).send({ success: true, message: "All Products successfully viewed", getProduct });
         };

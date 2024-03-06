@@ -28,6 +28,7 @@ import Checkout from "./pages/Checkout/Checkout";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentCancel from "./pages/PaymentCancel";
 import MyOrders from "./pages/MyOrders";
+import AllOrdersList from "./pages/AllOrdersList";
 
 const App = () => {
 
@@ -73,6 +74,7 @@ const App = () => {
           {hasRole('admin') && (<Route path="/add-product" element={<AddProduct />} />)}
           {hasRole('admin') && (<Route path="/product-list" element={<ProductList />} />)}
           {hasRole('admin') && (<Route path="/update-product/:id" element={<UpdateProduct />} />)}
+          {hasRole('admin') && (<Route path="/all-orders" element={<AllOrdersList />} />)}
 
           <Route path="*" element={<Error />} />
         </Routes>

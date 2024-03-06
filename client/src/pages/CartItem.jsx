@@ -4,14 +4,13 @@ import { AuthContext } from '../store/auth';
 import Swal from 'sweetalert2';
 import { CiCircleMinus, CiCirclePlus } from "react-icons/ci";
 import { NavLink, Link } from "react-router-dom";
-
+import { BsCartPlus } from "react-icons/bs";
 
 const CartItem = () => {
 
     const { token, API_BASE_URL, addToCart, cartCount, cartItemCounts } = useContext(AuthContext);
     const [cartItemDetail, setCartItemDetail] = useState([]);
     const [grandTotal, setGrandTotal] = useState(0);
-    // console.log(singleItem);
 
     const increaseCartItem = async (productId) => {
         const response = await addToCart({
@@ -131,25 +130,26 @@ const CartItem = () => {
 
     return (
         <>
-            <table className='table cart-table mb-0 table-responsive-sm'>
-                <thead>
-                    <tr>
-                        <th>Action</th>
-                        <th>Product</th>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Qty</th>
-                        <th className='text-right'> <span id="amount" className='amount'>Total Amount</span></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        cartItemDetail[0] &&
-                        cartItemDetail[0]['cartitem'].map((eachElement, index) => {
-                            const { productId, _id } = eachElement;
-                            return (
-                                <>
-                                    <tr >
+            {(cartItemCounts >= 1) ?
+                <table className='table cart-table mb-0 table-responsive-sm'>
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Product</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th className='text-right'> <span id="amount" className='amount'>Total Amount</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            cartItemDetail[0] &&
+                            cartItemDetail[0]['cartitem'].map((eachElement, index) => {
+                                const { productId, _id } = eachElement;
+                                return (
+
+                                    <tr key={index}>
                                         <td >
                                             <button className='prdct-delete'
                                                 onClick={() => deleteCartItem(eachElement._id)}
@@ -173,23 +173,30 @@ const CartItem = () => {
                                         </td>
                                         <td className='text-right'>&#8377;{eachElement.quantity * eachElement.productPrice}</td>
                                     </tr>
-                                </>
-                            )
-                        })
-                    }
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <th>&nbsp;</th>
-                        <th colSpan={2}>&nbsp;</th>
-                        <th className='text-right2'>Items In Cart <span className='ml-2 mr-2'> : </span><span className='text-left'>{(cartItemCounts > 0) ? cartItemCounts : null}</span></th>
-                        <th className='text-right2'>Total Price<span className='ml-2 mr-2'> : </span><span className='text-left'>&#8377;{grandTotal && grandTotal}</span></th>
-                        <th >
-                            <NavLink to="/checkout"><button className='btn btn-success' type='button'>Checkout</button></NavLink>
-                        </th>
-                    </tr>
-                </tfoot>
-            </table>
+
+                                )
+                            })
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th colSpan={2}>&nbsp;</th>
+                            <th className='text-right2'>Items In Cart <span className='ml-2 mr-2'> : </span><span className='text-left'>{(cartItemCounts > 0) ? cartItemCounts : null}</span></th>
+                            <th className='text-right2'>Total Price<span className='ml-2 mr-2'> : </span><span className='text-left'>&#8377;{grandTotal && grandTotal}</span></th>
+                            <th >
+                                <NavLink to="/checkout"><button className='btn btn-success' type='button' disabled={(cartItemCounts > 0) ? false : true}>Checkout</button></NavLink>
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
+                : <div className='emptyCart'>
+                    <BsCartPlus className='emptyCartIcon' />
+                    <h1>Empty Cart</h1>
+                    <p>For Order Something Please Add Product to Cart</p>
+                </div>
+            }
+
         </>
     )
 }

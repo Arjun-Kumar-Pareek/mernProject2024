@@ -27,4 +27,16 @@ orderRoute.get(
     orderController.viewOrder
 );
 
+//View All Order
+orderRoute.get(
+    "/view-all-order", auth,
+    orderController.viewAllOrder
+)
+
+//Delete Order
+orderRoute.get(
+    "/delete-order", auth,
+    orderController.deleteOrder
+)
+
 module.exports = orderRoute;

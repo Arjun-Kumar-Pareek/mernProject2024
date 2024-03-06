@@ -71,6 +71,14 @@ const Navbar = () => {
                             <NavLink to="/product-list">Product List</NavLink>
                           </li>
                         )}
+                        {hasRole('admin') && (
+                          <li>
+                            <NavLink to="/all-orders">All Orders List</NavLink>
+                          </li>
+                        )}
+                        <li>
+                          <NavLink to="/my-orders">My Orders</NavLink>
+                        </li>
                         <li>
                           <Link to="/" onClick={logout}>
                             Logout

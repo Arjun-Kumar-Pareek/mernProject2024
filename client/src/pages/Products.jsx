@@ -5,6 +5,7 @@ import Pagination from '../components/Pagination';
 
 const Products = () => {
     const [productData, setProductData] = useState([]);
+    productData.reverse()
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 

@@ -76,6 +76,7 @@ export default function Review(props) {
 
     useEffect(() => {
         fetchCartItems();
+        cartCount();
     }, []);
 
 

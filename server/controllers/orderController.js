@@ -4,8 +4,9 @@ const Product = require("../models/productModel");
 const { ObjectId } = require("mongodb");
 const path = require("path");
 const fs = require("fs");
+const { log } = require("console");
+require('dotenv').config()
 
-// require("dotenv").config();
 const stripe = require("stripe")('sk_test_51OGy4BSEWW2cslHik2PtEBrFhq4uJL33DD428TzkcPZtAYC7oY70dzr0jHc409HHa9DE1tmtMh9a8bfdrPZCMs6c00d8UNy4R5');
 
 
@@ -61,8 +62,8 @@ module.exports.createOrder = async (req, res) => {
                 payment_method_types: ["card"],
                 line_items: lineItems,
                 mode: "payment",
-                success_url: `http://localhost:5173/sucess/id=${savedOrder._id}`,
-                cancel_url: `http://localhost:5173/cancel/id=${savedOrder._id}`,
+                success_url: `http://localhost:5173/sucess/${savedOrder._id}`,
+                cancel_url: `http://localhost:5173/cancel/${savedOrder._id}`,
             });
 
             res.json({ id: session.id })
@@ -127,7 +128,45 @@ module.exports.viewOrder = async (req, res) => {
             });
 
         if (findOrder) {
-            res.status(200).send({ success: true, message: "Order viewed successfully", data: findOrder });
+
+            const data = findOrder.map((cur) => {
+                return {
+                    _id: cur._id,
+                    customerName: cur.customerName,
+                    email: cur.email,
+                    userId: cur.userId,
+                    orderItems: cur.orderItems.map((data) => {
+                        return {
+                            _id: data._id,
+                            productId: {
+                                _id: data.productId._id,
+                                name: data.productId.name,
+                                price: data.productId.price,
+                                image: data.productId.image.map((img) => {
+                                    return (
+                                        `${process.env.FILE_PATH}/${img}`
+                                    )
+                                }),
+                                description: data.productId.description,
+                                categoryId: data.productId.categoryId,
+                                companyId: data.productId.companyId,
+                                status: data.productId.status,
+                            },
+                            productName: data.productName,
+                            quantity: data.quantity,
+                            price: data.price,
+                        }
+                    }),
+                    deliveryDetails: cur.deliveryDetails,
+                    totalAmount: cur.totalAmount,
+                    paymentMode: cur.paymentMode,
+                    orderStatus: cur.orderStatus,
+                    orderNumber: cur.orderNumber,
+                    createdAt: cur.createdAt
+                }
+            })
+
+            res.status(200).send({ success: true, message: "Order viewed successfully", data: data });
         } else {
             res.status(200).send({ success: true, message: "Order not Found" });
         }
@@ -135,3 +174,91 @@ module.exports.viewOrder = async (req, res) => {
         res.status(400).send({ success: false, message: error.message });
     }
 };
+
+module.exports.viewAllOrder = async (req, res) => {
+    try {
+        const findOrder = await Order.find({})
+            .select("-__v")
+            .populate({
+                path: "orderItems",
+                populate: {
+                    path: "productId",
+                    model: "Product",
+                    populate: [{
+                        path: "categoryId",
+                        model: "Category"
+                    },
+                    {
+                        path: "companyId",
+                        model: "Company"
+                    }]
+                }
+            });
+
+        if (findOrder) {
+
+            const data = findOrder.map((cur) => {
+                return {
+                    _id: cur._id,
+                    customerName: cur.customerName,
+                    email: cur.email,
+                    userId: cur.userId,
+                    orderItems: cur.orderItems.map((data) => {
+                        return {
+                            _id: data._id,
+                            productId: {
+                                _id: data.productId._id,
+                                name: data.productId.name,
+                                price: data.productId.price,
+                                image: data.productId.image.map((img) => {
+                                    return (
+                                        `${process.env.FILE_PATH}/${img}`
+                                    )
+                                }),
+                                description: data.productId.description,
+                                categoryId: data.productId.categoryId,
+                                companyId: data.productId.companyId,
+                                status: data.productId.status,
+                            },
+                            productName: data.productName,
+                            quantity: data.quantity,
+                            price: data.price,
+                        }
+                    }),
+                    deliveryDetails: cur.deliveryDetails,
+                    totalAmount: cur.totalAmount,
+                    paymentMode: cur.paymentMode,
+                    orderStatus: cur.orderStatus,
+                    orderNumber: cur.orderNumber,
+                    createdAt: cur.createdAt
+                }
+            })
+
+            res.status(200).send({ success: true, message: "Order viewed successfully", data: data });
+        } else {
+            res.status(200).send({ success: true, message: "Order not Found" });
+        }
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message });
+    }
+};
+
+module.exports.deleteOrder = async (req, res) => {
+    try {
+        const { _id } = req.query;
+        const findOrder = await Order.find({ _id: new ObjectId(_id) });
+        if (findOrder) {
+            for (const cur of findOrder) {
+                cur.orderItems.map(async (item) => {
+                    await OrderItem.deleteMany({ _id: new ObjectId(item._id) })
+                })
+            }
+            await Order.deleteOne({ _id: new ObjectId(_id) });
+            res.status(200).send({ success: true, message: "Order deleted successfully" });
+        } else {
+            res.status(400).send({ success: false, message: "Order not found" });
+        }
+    } catch (error) {
+        res.status(400).send({ success: false, message: error.message });
+    }
+}

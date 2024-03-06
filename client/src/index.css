@@ -1151,6 +1151,7 @@ button.pagination-btn:hover {
   background-color: #583e45;
 }
 
+
 /*  CSS for SearchProduct Page  */
 
 .search-product {
@@ -1338,6 +1339,35 @@ button.pagination-btn:hover {
   color: white;
 }
 
+.emptyCart {
+  width: 100%;
+  align-items: center;
+}
+
+.emptyCart {
+  width: 120rem;
+  margin: auto;
+}
+
+.emptyCart h1 {
+  text-align: center;
+  color: #455A64;
+}
+
+.emptyCart p {
+  text-align: center;
+  color: #577380;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.emptyCartIcon {
+  width: 30%;
+  height: 30%;
+  color: rgba(193, 193, 193, 0.619);
+  margin: 0 35%;
+}
+
 /* Check out page */
 .order-product-img {
   width: 30px;
@@ -1518,7 +1548,7 @@ button.pagination-btn:hover {
   justify-content: space-between;
   align-items: center;
   margin-top: 15px;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 }
 
 .card-body {
@@ -1615,11 +1645,11 @@ button.pagination-btn:hover {
   z-index: -1;
 }
 
-#progressbar-1 li:nth-child(2):after {
+#progressbar-1 li:nth-child(1):after {
   left: 50%;
 }
 
-#progressbar-1 li:nth-child(1):after {
+#progressbar-1 li:nth-child(2):after {
   left: 35%;
   width: 121%
 }
@@ -1641,4 +1671,28 @@ button.pagination-btn:hover {
 
 .card-stepper {
   z-index: 0
+}
+
+.viewDetail {
+  color: var(--btn-color);
+  margin: 20px;
+  cursor: pointer;
+
+  &:hover {
+    color: #053ba0;
+  }
+}
+
+/* -----All Order List------ */
+tr.orderList:hover {
+  background-color: rgba(74, 73, 73, 0.477);
+  cursor: pointer;
+}
+
+.statusChange {
+  color: rgb(65, 121, 210);
+
+  &:hover {
+    color: white;
+  }
 }
