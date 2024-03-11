@@ -8,7 +8,7 @@ const MyOrders = () => {
 
     const { token, cartCount } = useContext(AuthContext);
     const [orderDetail, setOrderDetail] = useState([]);
-    orderDetail.reverse()
+    // orderDetail.reverse()
 
     const fetchOrderDetails = async () => {
         try {
@@ -24,7 +24,7 @@ const MyOrders = () => {
             if (response.ok) {
                 const completeRes = await response.json();
                 const completeData = completeRes.data;
-                setOrderDetail(completeData);
+                setOrderDetail(completeData.reverse());
             } else {
                 const errorResponse = await response.json();
                 console.log("Error on My Orders Page :", errorResponse.message);

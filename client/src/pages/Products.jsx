@@ -5,7 +5,6 @@ import Pagination from '../components/Pagination';
 
 const Products = () => {
     const [productData, setProductData] = useState([]);
-    productData.reverse()
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -42,7 +41,7 @@ const Products = () => {
                 if (response.ok) {
                     const completeRes = await response.json();
                     const completeData = completeRes.getProduct;
-                    setProductData(completeData);
+                    setProductData(completeData.reverse());
                     setLoading(false);
                 } else {
                     const errorResponse = await response.json();

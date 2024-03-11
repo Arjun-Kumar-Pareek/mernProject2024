@@ -22,7 +22,7 @@ const AllOrdersList = () => {
             if (response.ok) {
                 const completeRes = await response.json();
                 const completeData = completeRes.data;
-                setOrderDetail(completeData);
+                setOrderDetail(completeData.reverse());
             } else {
                 const errorResponse = await response.json();
                 console.log("Error on All Orders List Page :", errorResponse.message);
@@ -71,6 +71,7 @@ const AllOrdersList = () => {
                     <tr>
                         <th>Order Number</th>
                         <th>Customer Name</th>
+                        <th>Date</th>
                         <th>Total Amount</th>
                         <th>Payment Mode</th>
                         <th>Status</th>
@@ -83,6 +84,14 @@ const AllOrdersList = () => {
                             <tr key={i} className='orderList'>
                                 <td>{curOrder.orderNumber}</td>
                                 <td>{curOrder.customerName}</td>
+                                <td>{new Date(curOrder.createdAt).toLocaleString(
+                                    "en-US",
+                                    {
+                                        month: "short",
+                                        day: "2-digit",
+                                        year: "numeric",
+                                    }
+                                )}</td>
                                 <td>{curOrder.totalAmount}</td>
                                 <td>{curOrder.paymentMode}</td>
                                 <td>{curOrder.orderStatus}</td>
