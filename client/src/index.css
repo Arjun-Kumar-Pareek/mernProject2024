@@ -810,7 +810,8 @@ svg.delete-icon:hover {
   margin: auto;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+  padding: 0 50px;
+  gap: 4%;
 }
 
 .products .loader {
